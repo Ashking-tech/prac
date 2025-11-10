@@ -1,0 +1,183 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define SIZE 10
+
+typedef struct {
+    char name[30];
+    long phone;
+    int isOccupied;
+} Client;
+
+Client linearTable[SIZE], quadraticTable[SIZE], doubleHashTable[SIZE];
+
+void initTable(Client table[]) {
+    for (int i = 0; i < SIZE; i++) {
+        table[i].isOccupied = 0;
+    }
+}
+
+int hash(char *name) {
+    int sum = 0;
+    for (int i = 0; name[i] != '\0'; i++) {
+        sum += name[i];
+    }
+    return sum % SIZE;
+}
+
+int hash2(char *name) {
+    int sum = 0;
+    for (int i = 0; name[i] != '\0'; i++) {
+        sum += name[i];
+    }
+    return 7 - (sum % 7);
+}
+
+void insertLinear() {
+    char name[30];
+    long phone;
+    printf("Enter name: ");
+    scanf("%s", name);
+    printf("Enter phone number: ");
+    scanf("%ld", &phone);
+
+    int index = hash(name);
+    int i = 0;
+    while (linearTable[(index + i) % SIZE].isOccupied && i < SIZE) {
+        i++;
+    }
+    if (i == SIZE) {
+        printf("Hash table is full!\n");
+    } else {
+        int pos = (index + i) % SIZE;
+        strcpy(linearTable[pos].name, name);
+        linearTable[pos].phone = phone;
+        linearTable[pos].isOccupied = 1;
+    }
+}
+
+void insertQuadratic() {
+    char name[30];
+    long phone;
+    printf("Enter name: ");
+    scanf("%s", name);
+    printf("Enter phone number: ");
+    scanf("%ld", &phone);
+
+    int index = hash(name);
+    int i = 0;
+    while (quadraticTable[(index + i * i) % SIZE].isOccupied && i < SIZE) {
+        i++;
+    }
+    if (i == SIZE) {
+        printf("Hash table is full!\n");
+    } else {
+        int pos = (index + i * i) % SIZE;
+        strcpy(quadraticTable[pos].name, name);
+        quadraticTable[pos].phone = phone;
+        quadraticTable[pos].isOccupied = 1;
+    }
+}
+
+void insertDoubleHash() {
+    char name[30];
+    long phone;
+    printf("Enter name: ");
+    scanf("%s", name);
+    printf("Enter phone number: ");
+    scanf("%ld", &phone);
+
+    int index1 = hash(name);
+    int index2 = hash2(name);
+
+    int i = 0;
+    while (doubleHashTable[(index1 + i * index2) % SIZE].isOccupied && i < SIZE) {
+        i++;
+    }
+    if (i == SIZE) {
+        printf("Hash table is full!\n");
+    } else {
+        int pos = (index1 + i * index2) % SIZE;
+        strcpy(doubleHashTable[pos].name, name);
+        doubleHashTable[pos].phone = phone;
+        doubleHashTable[pos].isOccupied = 1;
+    }
+}
+
+void search(Client table[], char *name, int type) {
+    int index = hash(name);
+    int i = 0, pos;
+
+    while (i < SIZE) {
+        if (type == 1)
+            pos = (index + i) % SIZE;
+        else if (type == 2)
+            pos = (index + i * i) % SIZE;
+        else
+            pos = (index + i * hash2(name)) % SIZE;
+
+        if (table[pos].isOccupied && strcmp(table[pos].name, name) == 0) {
+            printf("Found: %s -> %ld\n", table[pos].name, table[pos].phone);
+            return;
+        }
+        i++;
+    }
+    printf("Client not found!\n");
+}
+
+void display(Client table[]) {
+    for (int i = 0; i < SIZE; i++) {
+        if (table[i].isOccupied) {
+            printf("[%d] %s -> %ld\n", i, table[i].name, table[i].phone);
+        } else {
+            printf("[%d] Empty\n", i);
+        }
+    }
+}
+
+int main() {
+    int choice, technique;
+    char name[30];
+    initTable(linearTable);
+    initTable(quadraticTable);
+    initTable(doubleHashTable);
+
+    while (1) {
+        printf("\n--- Telephone Book Hash Table ---\n");
+        printf("1. Insert\n2. Search\n3. Display\n4. Exit\n");
+        printf("Enter choice: ");
+        scanf("%d", &choice);
+
+        if (choice == 4)
+            break;
+
+        printf("Choose Collision Handling:\n");
+        printf("1. Linear Probing\n2. Quadratic Probing\n3. Double Hashing\n");
+        scanf("%d", &technique);
+
+        switch (choice) {
+            case 1:
+                if (technique == 1) insertLinear();
+                else if (technique == 2) insertQuadratic();
+                else insertDoubleHash();
+                break;
+            case 2:
+                printf("Enter name to search: ");
+                scanf("%s", name);
+                if (technique == 1) search(linearTable, name, 1);
+                else if (technique == 2) search(quadraticTable, name, 2);
+                else search(doubleHashTable, name, 3);
+                break;
+            case 3:
+                if (technique == 1) display(linearTable);
+                else if (technique == 2) display(quadraticTable);
+                else display(doubleHashTable);
+                break;
+            default:
+                printf("Invalid choice!\n");
+        }
+    }
+
+    return 0;
+}
