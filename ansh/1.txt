@@ -1,0 +1,89 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+int compareIntegers(const void *a, const void *b) {
+    return (*(const int*)a - *(const int*)b);
+}
+
+bool binarySearch(int arr[], int size, int key) {
+    int low = 0;
+    int high = size - 1;
+    while (low <= high) {
+        int mid = low + (high - low) / 2;
+        if (arr[mid] == key) {
+            return true;
+        } else if (arr[mid] < key) {
+            low = mid + 1;
+        } else {
+            high = mid - 1;
+        }
+    }
+    return false;
+}
+
+int main() {
+    int rollNumbers[100];
+    int numStudents = 0;
+    int choice, rollToSearch;
+
+    do {
+        printf("\n--- Training Program Attendance Menu ---\n");
+        printf("1. Add Student Roll Number\n");
+        printf("2. Search Student Attendance (Binary Search)\n");
+        printf("3. Display All Attended Roll Numbers\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                if (numStudents < 100) {
+                    printf("Enter student roll number to add: ");
+                    scanf("%d", &rollNumbers[numStudents]);
+                    numStudents++;
+                    qsort(rollNumbers, numStudents, sizeof(int), compareIntegers);
+                    printf("Roll number added and array sorted.\n");
+                } else {
+                    printf("Array is full. Cannot add more students.\n");
+                }
+                break;
+
+            case 2:
+                if (numStudents > 0) {
+                    printf("Enter roll number to search: ");
+                    scanf("%d", &rollToSearch);
+                    if (binarySearch(rollNumbers, numStudents, rollToSearch)) {
+                        printf("Roll number %d attended the training program.\n", rollToSearch);
+                    } else {
+                        printf("Roll number %d did NOT attend the training program.\n", rollToSearch);
+                    }
+                } else {
+                    printf("No student roll numbers entered yet.\n");
+                }
+                break;
+
+            case 3:
+                if (numStudents > 0) {
+                    printf("Attended Roll Numbers (Sorted):\n");
+                    for (int i = 0; i < numStudents; i++) {
+                        printf("%d ", rollNumbers[i]);
+                    }
+                    printf("\n");
+                } else {
+                    printf("No student roll numbers entered yet.\n");
+                }
+                break;
+
+            case 4:
+                printf("Exiting program. Goodbye!\n");
+                break;
+
+            default:
+                printf("Invalid choice. Please try again.\n");
+        }
+    } while (choice != 4);
+
+    return 0;
+}
+
