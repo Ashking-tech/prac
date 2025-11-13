@@ -1,76 +1,92 @@
 #include <iostream>
 using namespace std;
 
-class Company {
+void selectionsort(float arr[],int n){
+    for(int i=0;i<n-1;i++){
+        int min=i;
+        for(int j=i+1;j<n;j++){
+            if (arr[j]<arr[min])
+            min =j;
+        }
+        swap(arr[i],arr[min]);
+        
+    }
+    cout << "Salaries Sorted using selection sort:"<< endl;
+    for(int i=0;i<n;i++)
+    cout << arr[i]<< " ";
+    cout << endl;
+    
+}
+void bubblesort(float arr[], int n) {
+    for (int i = 0; i < n - 1; i++) {
+        bool swapped = false;
+        for (int j = 0; j < n - i - 1; j++) {
+            if (arr[j] > arr[j + 1]) {
+                swap(arr[j], arr[j + 1]);
+                swapped = true;
+            }
+        }
+        if (!swapped)
+            break;
+    }
+    cout << "\nSalaries Sorted using Bubble Sort:\n";
+    for (int i = 0; i < n; i++)
+        cout << arr[i] << " ";
+    cout << endl;
+}
+void displayTopFive(float arr[],int n){
+    cout << "Top 5 Highest Salaries:" << endl;
+    int count =0;
+    for(int i=n-1;i >= 0 && count<5; i--, count++)
+    cout << arr[i] << " ";
+    cout << endl;
+}
+
+
+int main(){
     float salary[100];
-    int n;
-
-public:
-    void input() {
-        cout << "Enter number of employees: ";
-        cin >> n;
-        cout << "Enter salaries: ";
-        for (int i = 0; i < n; i++)
-            cin >> salary[i];
-    }
-
-    void selectionSort() {
-        for (int i = 0; i < n - 1; i++) {
-            int minIndex = i;
-            for (int j = i + 1; j < n; j++)
-                if (salary[j] < salary[minIndex])
-                    minIndex = j;
-            swap(salary[i], salary[minIndex]);
+    int n, choice;
+    
+    cout << "Enter number of employees: ";
+    cin >> n;
+    cout << "Enter Salaries of " << n << " employees" << endl;
+    for(int i=0; i<n;i++)
+    cin >> salary[i];
+    
+    do{
+        cout << "====== SALARY MENU====="<< endl;
+        cout << "1. Selection Sort" << endl;
+        cout << "2. Bubble Sort"<< endl;
+        cout << "3. Display top 5 salaries" << endl;
+        cout << "4. Display All Salarie: " << endl;
+        cout << "5. Exit"<< endl;
+        cout << "Enter your Choice: ";
+        cin >> choice;
+        
+        switch(choice){
+            case 1:
+            selectionsort(salary,n);
+            break;
+            case 2:
+            bubblesort(salary,n);
+            break;
+            case 3:
+            displayTopFive(salary,n);
+            break;
+            case 4:
+            cout << "Employee Salaries: ";
+            for (int i=0; i<n;i++)
+            cout << salary[i]<< " ";
+            cout << endl;
+            break;
+            case 5:
+            cout << "Exiting Program.." << endl;
+            break;
+            default:
+            cout << "Invalid Choice!! Try Again."<<endl;
+            
         }
-        cout << "Salaries sorted using Selection Sort.\n";
-    }
-
-    void bubbleSort() {
-        for (int i = 0; i < n - 1; i++)
-            for (int j = 0; j < n - i - 1; j++)
-                if (salary[j] > salary[j + 1])
-                    swap(salary[j], salary[j + 1]);
-        cout << "Salaries sorted using Bubble Sort.\n";
-    }
-
-    void displayTopFive() {
-        cout << "Top 5 Salaries:\n";
-        for (int i = n - 1, count = 0; i >= 0 && count < 5; i--, count++)
-            cout << salary[i] << endl;
-    }
-
-    void display() {
-        for (int i = 0; i < n; i++)
-            cout << salary[i] << " ";
-        cout << endl;
-    }
-};
-
-int main() {
-    Company c;
-    int ch;
-    do {
-        cout << "\n1. Input\n2. Selection Sort\n3. Bubble Sort\n4. Display\n5. Exit\n";
-        cout << "Enter choice: ";
-        cin >> ch;
-
-        switch (ch) {
-        case 1:
-            c.input();
-            break;
-        case 2:
-            c.selectionSort();
-            c.displayTopFive();
-            break;
-        case 3:
-            c.bubbleSort();
-            c.displayTopFive();
-            break;
-        case 4:
-            c.display();
-            break;
-        case 5:
-            cout << "Exiting...\n";
-        }
-    } while (ch != 5);
+        
+    }while(choice!=5);
+    return 0;
 }
